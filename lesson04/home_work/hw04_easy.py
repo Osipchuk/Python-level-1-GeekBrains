@@ -6,9 +6,23 @@
 # квадратами элементов исходного списка
 # [1, 2, 4, 0] --> [1, 4, 16, 0]
 
+print('\nЗадание-1:')
+my_list = input('Введите список из целых чисел через запятую:\n').split(', ')
+try:
+    modified_list = [(int(x)) ** 2 for x in my_list]
+except ValueError:
+    print('Неверный формат ввода')
+print(modified_list)
+
 # Задание-2:
 # Даны два списка фруктов.
 # Получить список фруктов, присутствующих в обоих исходных списках.
+
+print('\nЗадание-2:')
+fruits1 = ['Apple', 'Orange', 'Kiwi', 'Pineapple']
+fruits2 = ['Mandarin', 'Orange', 'Lemon', 'Kiwi', 'Pineapple']
+fruits = list(filter(lambda x: x in fruits2, fruits1))
+print(fruits)
 
 # Задание-3:
 # Дан список, заполненный произвольными числами.
@@ -16,3 +30,11 @@
 # + Элемент кратен 3
 # + Элемент положительный
 # + Элемент не кратен 4
+
+print('\nЗадание-3:')
+my_list = input('Введите список из целых чисел через запятую:\n').split(', ')
+try:
+    modified_list = [i for i in my_list if int(i) % 3 == 0 and int(i) >= 0 and int(i) % 4 != 0]
+except ValueError:
+    print('Неверный формат ввода')
+print(modified_list)
