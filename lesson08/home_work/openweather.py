@@ -1,5 +1,4 @@
-
-""" 
+"""
 == OpenWeatherMap ==
 
 OpenWeatherMap — онлайн-сервис, который предоставляет бесплатный API
@@ -123,3 +122,47 @@ OpenWeatherMap — онлайн-сервис, который предостав�
 
 """
 
+import os
+import json
+import gzip
+import sqlite3
+import urllib.request
+import datetime
+
+if not os.path.isfile('file.gzip'):
+    url = 'http://bulk.openweathermap.org/sample/city.list.json.gz'
+    urllib.request.urlretrieve(url,os.getcwd() + '\\file.gzip')
+else:
+    pass
+f = gzip.open('file.gzip')
+contents = f.read()
+f.close()
+u_str = contents.decode('utf-8')  # u_str is now a unicode string
+f1 = open('cities.txt', 'w', encoding='utf-8')
+f1.write(u_str)
+f1.close()
+city = input('Введите город: ')
+data = json.loads(u_str)
+for line in data:
+    if line['name'] == city:
+        result = line
+res = urllib.request.urlopen(
+    f'http://api.openweathermap.org/data/2.5/forecast?id={result["id"]}&units='
+    f'metric&APPID=afb2d0a0c79e4b861bfd518c67ad19a2'
+)
+res = res.read()
+weather = json.loads(res)
+connection = sqlite3.connect('weather.db')
+cursor = connection.cursor()
+try:
+   cursor.execute("create table weather (id_города integer not NULL primary key, город VARCHAR(255), Дата DATE, Температура INTEGER, id_погоды INTEGER)")
+except sqlite3.OperationalError:
+    pass
+for key in weather['list']:
+    data = f'"{result["id"]}","{city}","{key["dt_txt"]}","{key["main"]["temp"]}","{key["weather"][0]["id"]}"'
+    if str(datetime.datetime.now())[:10] in data:
+        query = (f'INSERT OR REPLACE into weather values ({data})')
+        cursor.execute(query)
+connection.commit()
+cursor.execute(f'select * from weather where город="{city}";')
+print(cursor.fetchone())
